@@ -17,6 +17,19 @@ class CustomersRepository {
 
         return result.rows[0]
     }
+
+    async create(name, email) {
+        const result = await pool.query(
+            `
+    INSERT INTO customers (name, email)
+    VALUES ($1, $2)
+    RETURNING *
+    `,
+    [name, email]
+        )
+
+        return result.rows[0]
+    }
 }
 
 export default new CustomersRepository()
