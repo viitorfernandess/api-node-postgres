@@ -14,6 +14,14 @@ class CustomersController {
 
         return res.json(customer)
     }
+
+    async create(req, res) {
+        const { name, email } = req.body
+
+        const newCustomer = await customersRepository.create(name, email)
+
+        return res.json(newCustomer)
+    }
 }
 
 export default new CustomersController()
