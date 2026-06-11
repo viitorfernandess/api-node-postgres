@@ -23,6 +23,15 @@ class CustomersController {
         return res.json(newCustomer)
     }
 
+    async update(req, res) {
+        const { id } = req.params
+        const { name, email } = req.body
+
+        const updatedCustomer = await customersRepository.update(id, name, email)
+
+        return res.json(updatedCustomer)
+    }
+
 }
 
 export default new CustomersController()
