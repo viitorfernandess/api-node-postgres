@@ -44,6 +44,18 @@ class CustomersRepository {
 
         return result.rows[0]
     }
+
+    async delete(id) {
+        const result = await pool.query(
+            `
+            DELETE FROM customers
+            WHERE id = $1
+            RETURNING *
+            `,
+            [id]
+        )
+        return result.rows[0]
+    }
 }
 
 export default new CustomersRepository()
