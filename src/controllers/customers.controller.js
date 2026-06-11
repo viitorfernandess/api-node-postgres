@@ -32,6 +32,14 @@ class CustomersController {
         return res.json(updatedCustomer)
     }
 
+    async delete(req, res) {
+        const { id } = req.params
+
+        const deletedCustomer = await customersRepository.delete(id)
+
+        return res.json(deletedCustomer)
+    }
+
 }
 
 export default new CustomersController()
