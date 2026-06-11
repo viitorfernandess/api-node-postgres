@@ -18,6 +18,24 @@ class OrdersRepository {
 
         return result.rows[0]
     }
+
+    async create(customerId, description, amount) {
+        const result = await pool.query(
+            `
+            INSERT INTO orders (
+            customer_id,
+            description, 
+            amount
+            )
+            VALUES ($1, $2, $3)
+            RETURNING *
+            `,
+            [customerId, description, amount]
+        )
+
+        return result.rows[0]
+    }
+
 }
 
 export default new OrdersRepository()
