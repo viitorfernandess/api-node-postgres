@@ -22,6 +22,7 @@ class CustomersController {
 
         return res.json(newCustomer)
     }
+
 }
 
 export default new CustomersController()
