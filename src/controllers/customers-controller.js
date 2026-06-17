@@ -1,4 +1,4 @@
-import customersRepository from "../repositories/customers.repository.js"
+import customersRepository from "../repositories/customers-repository.js"
 
 class CustomersController {
     async index(req, res) {
