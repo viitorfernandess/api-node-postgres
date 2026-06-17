@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { Pool } from 'pg'
 
 const pool = new Pool({
@@ -5,7 +6,7 @@ const pool = new Pool({
     port: 5432,
     database: 'api-node-postgres',
     user: 'postgres',
-    password: "fernandes21"
+    password: process.env.DB_PASSWORD
 })
 
 export default pool
