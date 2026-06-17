@@ -1,4 +1,4 @@
-import ordersRepository from "../repositories/orders-repository"
+import ordersRepository from "../repositories/orders-repository.js"
 
 class OrdersController {
     async index(req, res) {
@@ -7,3 +7,5 @@ class OrdersController {
         return res.json(orders)
     }
 }
+
+export default new OrdersController
