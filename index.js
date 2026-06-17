@@ -1,4 +1,4 @@
-import customersRoutes from './src/routes/customers.routes.js'
+import customersRoutes from './src/routes/customers-routes.js'
 import ordersRoutes from './src/routes/orders-routes.js'
 import express from 'express'
 
