@@ -22,6 +22,15 @@ class OrdersController {
 
         return res.json(newOrder)
     }
+
+    async update(req, res) {
+        const { id } = req.params
+        const { description, amount } = req.body
+
+        const updatedOrder = await ordersRepository.update(id, description, amount)
+
+        return res.json(updatedOrder)
+    }
 }
 
 export default new OrdersController

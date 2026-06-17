@@ -36,18 +36,17 @@ class OrdersRepository {
         return result.rows[0]
     }
 
-    async update(id, customerId, description, amount) {
+    async update(id, description, amount) {
         const result = await pool.query(
             `
             UPDATE orders
             SET
-            customer_id = $1,
-            description = $2,
-            amount = $3
-            WHERE id = $4
+            description = $1,
+            amount = $2
+            WHERE id = $3
             RETURNING *
             `,
-            [customerId, description, amount, id]
+            [description, amount, id]
         )
         return result.rows[0]
     }
