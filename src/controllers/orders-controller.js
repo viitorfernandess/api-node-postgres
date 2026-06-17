@@ -31,6 +31,14 @@ class OrdersController {
 
         return res.json(updatedOrder)
     }
+
+    async delete(req, res) {
+        const { id } = req.params
+
+        const deletedOrder = await ordersRepository.delete(id)
+
+        return res.json(deletedOrder)
+    }
 }
 
 export default new OrdersController
