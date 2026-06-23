@@ -16,7 +16,8 @@ class OrdersController {
     }
 
     async create(req, res) {
-        const { customerId, description, amount } = req.body
+        const { customerId } = req.params
+        const { description, amount } = req.body
 
         const newOrder = await ordersRepository.create(customerId, description, amount)
 

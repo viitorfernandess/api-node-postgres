@@ -8,6 +8,7 @@ router.get('/customers/:id', customersController.show)
 router.post('/customers', customersController.create)
 router.put('/customers/:id', customersController.update)
 router.delete('/customers/:id', customersController.delete)
+router.get('/customers/:id/orders', customersController.orders)
 
 
 export default router

@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.get('/orders', ordersController.index)
 router.get('/orders/:id', ordersController.show)
-router.put('/orders', ordersController.create)
+router.put('/customers/:customerId/orders', ordersController.create)
 router.put('/orders/:id', ordersController.update)
 router.delete('/orders/:id', ordersController.delete)
 
