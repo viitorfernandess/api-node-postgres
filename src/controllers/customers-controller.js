@@ -1,4 +1,5 @@
 import customersRepository from "../repositories/customers-repository.js"
+import ordersRepository from "../repositories/orders-repository.js"
 
 class CustomersController {
     async index(req, res) {
@@ -38,6 +39,14 @@ class CustomersController {
         const deletedCustomer = await customersRepository.delete(id)
 
         return res.json(deletedCustomer)
+    }
+
+    async orders(req, res) {
+        const { id } = req.params
+
+        const orders = await ordersRepository.findByCustomerId(id)
+
+        res.json(orders)
     }
 
 }
