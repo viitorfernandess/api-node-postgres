@@ -63,6 +63,19 @@ class OrdersRepository {
         return result.rows[0]
     }
 
+    async findByCustomerId(customerId) {
+        const result = await pool.query(
+            `
+            SELECT *
+            FROM orders
+            WHERE customer_id = $1
+            `,
+            [customerId]
+        )
+
+        return result.rows
+    }
+
 }
 
 export default new OrdersRepository()
