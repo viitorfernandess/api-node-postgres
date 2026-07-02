@@ -35,8 +35,6 @@ class OrdersController {
            return res.status(404).json({ message: "Customer not found" })
         }
 
-        
-
         const newOrder = await ordersRepository.create(customerId, description, amount)
 
         return res.json(newOrder)
@@ -45,6 +43,22 @@ class OrdersController {
     async update(req, res) {
         const { id } = req.params
         const { description, amount } = req.body
+
+        // Validações de entrada
+        if (typeof description !== "string") {
+            return res.status(400).json({ message: "Description is required" })
+        }
+
+        if (typeof amount !== "number") {
+            return res.status(400).json({ message: "Amount must be a number" })
+        }
+
+        // Regra de negócio
+        const order = await ordersRepository.findById(id)
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" })
+        }
 
         const updatedOrder = await ordersRepository.update(id, description, amount)
 
