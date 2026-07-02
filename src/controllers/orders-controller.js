@@ -20,10 +20,22 @@ class OrdersController {
         const { customerId } = req.params
         const { description, amount } = req.body
 
+        // Validações de entrada
+        if (typeof description !== "string") {
+            return res.status(400).json({ message: "Description is required" })
+        }
+
+        if (typeof amount !== "number") {
+            return res.status(400).json({ message: "Amount must be a number" })
+        }
+
+        // Regra de negócio
         const customer = await customersRepository.findById(customerId)
         if (!customer) {
            return res.status(404).json({ message: "Customer not found" })
         }
+
+        
 
         const newOrder = await ordersRepository.create(customerId, description, amount)
 
