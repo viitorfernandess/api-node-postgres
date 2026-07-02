@@ -9,9 +9,12 @@ class OrdersController {
     }
 
     async show(req, res) {
-        const id = req.params.id
-
+        const { id } = req.params
+        // Regra de negócio
         const order = await ordersRepository.findById(id)
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" })
+        }
 
         return res.json(order)
     }
@@ -32,7 +35,7 @@ class OrdersController {
         // Regra de negócio
         const customer = await customersRepository.findById(customerId)
         if (!customer) {
-           return res.status(404).json({ message: "Customer not found" })
+            return res.status(404).json({ message: "Customer not found" })
         }
 
         const newOrder = await ordersRepository.create(customerId, description, amount)
@@ -70,7 +73,7 @@ class OrdersController {
 
         // Regra de negócio
         const order = await ordersRepository.findById(id)
-        if(!order) {
+        if (!order) {
             return res.status(404).json({ message: "Order not found" })
         }
 
