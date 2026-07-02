@@ -1,4 +1,5 @@
 import ordersRepository from "../repositories/orders-repository.js"
+import customersRepository from "../repositories/customers-repository.js"
 
 class OrdersController {
     async index(req, res) {
@@ -18,6 +19,11 @@ class OrdersController {
     async create(req, res) {
         const { customerId } = req.params
         const { description, amount } = req.body
+
+        const customer = await customersRepository.findById(customerId)
+        if (!customer) {
+           return res.status(404).json({ message: "Customer not found" })
+        }
 
         const newOrder = await ordersRepository.create(customerId, description, amount)
 
