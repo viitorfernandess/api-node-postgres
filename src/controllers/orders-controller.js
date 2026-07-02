@@ -68,6 +68,12 @@ class OrdersController {
     async delete(req, res) {
         const { id } = req.params
 
+        // Regra de negócio
+        const order = await ordersRepository.findById(id)
+        if(!order) {
+            return res.status(404).json({ message: "Order not found" })
+        }
+
         const deletedOrder = await ordersRepository.delete(id)
 
         return res.json(deletedOrder)
