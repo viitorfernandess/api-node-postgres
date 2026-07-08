@@ -35,7 +35,19 @@ class CustomersController {
     async update(req, res) {
         const { id } = req.params
         const { name, email } = req.body
+        // Validação de entrada
+        if (typeof name !== "string") {
+            return res.status(400).json({ message: "Name must be a string" })
+        }
+        if (typeof email !== "string") {
+            return res.status(400).json({ message: "Email must be a string" })
+        }
 
+        //Regra de negócio 
+        const customer = await customersRepository.findById(id)
+        if (!customer) {
+            return res.status(404).json({ message: "Customer not found" })
+        }
         const updatedCustomer = await customersRepository.update(id, name, email)
 
         return res.json(updatedCustomer)
