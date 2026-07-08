@@ -60,7 +60,7 @@ class CustomersController {
         if (!customer) {
             return res.status(404).json({ message: "Customer not found" })
         }
-        
+
         const deletedCustomer = await customersRepository.delete(id)
 
         return res.json(deletedCustomer)
@@ -68,6 +68,11 @@ class CustomersController {
 
     async orders(req, res) {
         const { id } = req.params
+        //Regra de negócio
+        const customer = await customersRepository.findById(id)
+        if (!customer) {
+            return res.status(404).json({ message: "Customer not found" })
+        }
 
         const orders = await ordersRepository.findByCustomerId(id)
 
