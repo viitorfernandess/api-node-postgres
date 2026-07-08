@@ -9,16 +9,24 @@ class CustomersController {
     }
 
     async show(req, res) {
-        const id = req.params.id
-
+        const { id } = req.params
+        // Regra de negócio
         const customer = await customersRepository.findById(id)
-
+        if (!customer) {
+            return res.status(404).json({ message: "Customer not found" })
+        }
         return res.json(customer)
     }
 
     async create(req, res) {
         const { name, email } = req.body
-
+        //Validação de entrada
+        if (typeof name !== "string") {
+            return res.status(400).json({ message: "Name must be a string" })
+        }
+        if (typeof email !== "string") {
+            return res.status(400).json({ message: "Email must be a string" })
+        }
         const newCustomer = await customersRepository.create(name, email)
 
         return res.json(newCustomer)
