@@ -23,7 +23,6 @@ class CustomersController {
         if (!name) {
             return res.status(400).json({ message: "Name is required" })
         }
-
         if (!email) {
             return res.status(400).json({ message: "Email is required" })
         }
@@ -42,6 +41,13 @@ class CustomersController {
     async update(req, res) {
         const { id } = req.params
         const { name, email } = req.body
+        if (!name) {
+            return res.status(400).json({ message: "Name is required" })
+        }
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" })
+        }
+
         // Validação de entrada
         if (typeof name !== "string") {
             return res.status(400).json({ message: "Name must be a string" })
