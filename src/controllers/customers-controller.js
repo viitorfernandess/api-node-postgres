@@ -40,6 +40,11 @@ class CustomersController {
             return res.status(400).json({ message: "Invalid email" })
         }
 
+        const customer = await customersRepository.findByEmail(email)
+        if (customer) {
+            return res.status(409).json({ message: "Email already exists" })
+        }
+
         const newCustomer = await customersRepository.create(name, email)
 
         return res.json(newCustomer)
@@ -71,6 +76,11 @@ class CustomersController {
         const customer = await customersRepository.findById(id)
         if (!customer) {
             return res.status(404).json({ message: "Customer not found" })
+        }
+
+        const customerByEmail = await customersRepository.findByEmail(email)
+        if (customerByEmail && customerByEmail.id !== Number(id)) {
+            return res.status(409).json({ message: "Email already exists" })
         }
         const updatedCustomer = await customersRepository.update(id, name, email)
 
