@@ -26,6 +26,7 @@ class CustomersController {
         if (!email) {
             return res.status(400).json({ message: "Email is required" })
         }
+
         //Validação de entrada
         if (typeof name !== "string") {
             return res.status(400).json({ message: "Name must be a string" })
@@ -33,6 +34,12 @@ class CustomersController {
         if (typeof email !== "string") {
             return res.status(400).json({ message: "Email must be a string" })
         }
+
+        const emailRegex = /\S+@\S+\.\S+/
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Invalid email" })
+        }
+        
         const newCustomer = await customersRepository.create(name, email)
 
         return res.json(newCustomer)
