@@ -39,7 +39,7 @@ class CustomersController {
         if (!emailRegex.test(email)) {
             return res.status(400).json({ message: "Invalid email" })
         }
-        
+
         const newCustomer = await customersRepository.create(name, email)
 
         return res.json(newCustomer)
@@ -63,6 +63,10 @@ class CustomersController {
             return res.status(400).json({ message: "Email must be a string" })
         }
 
+        const emailRegex = /\S+@\S+\.\S+/
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Invalid email" })
+        }
         //Regra de negócio 
         const customer = await customersRepository.findById(id)
         if (!customer) {
