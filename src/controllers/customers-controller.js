@@ -20,25 +20,6 @@ class CustomersController {
 
     async create(req, res) {
         const { name, email } = req.body
-        if (!name) {
-            return res.status(400).json({ message: "Name is required" })
-        }
-        if (!email) {
-            return res.status(400).json({ message: "Email is required" })
-        }
-
-        //Validação de entrada
-        if (typeof name !== "string") {
-            return res.status(400).json({ message: "Name must be a string" })
-        }
-        if (typeof email !== "string") {
-            return res.status(400).json({ message: "Email must be a string" })
-        }
-
-        const emailRegex = /\S+@\S+\.\S+/
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({ message: "Invalid email" })
-        }
 
         const customer = await customersRepository.findByEmail(email)
         if (customer) {
