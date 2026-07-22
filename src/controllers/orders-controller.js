@@ -23,21 +23,6 @@ class OrdersController {
         const { customerId } = req.params
         const { description, amount } = req.body
 
-        if (!description) {
-            return res.status(400).json({ message: "Description is required" })
-        }
-        if (amount === undefined) {
-            return res.status(400).json({ message: "Amount is required" })
-        }
-        // Validações de entrada
-        if (typeof description !== "string") {
-            return res.status(400).json({ message: "Description must be a string" })
-        }
-
-        if (typeof amount !== "number") {
-            return res.status(400).json({ message: "Amount must be a number" })
-        }
-
         // Regra de negócio
         const customer = await customersRepository.findById(customerId)
         if (!customer) {
@@ -52,22 +37,6 @@ class OrdersController {
     async update(req, res) {
         const { id } = req.params
         const { description, amount } = req.body
-
-        if (!description) {
-            return res.status(400).json({ message: "Description is required" })
-        }
-        if (amount === undefined) {
-            return res.status(400).json({ message: "Amount is required" })
-        }
-
-        // Validações de entrada
-        if (typeof description !== "string") {
-            return res.status(400).json({ message: "Description must be a string" })
-        }
-
-        if (typeof amount !== "number") {
-            return res.status(400).json({ message: "Amount must be a number" })
-        }
 
         // Regra de negócio
         const order = await ordersRepository.findById(id)
