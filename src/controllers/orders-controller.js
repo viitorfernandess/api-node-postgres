@@ -31,7 +31,7 @@ class OrdersController {
 
         const newOrder = await ordersRepository.create(customerId, description, amount)
 
-        return res.json(newOrder)
+        return res.status(201).json(newOrder)
     }
 
     async update(req, res) {
