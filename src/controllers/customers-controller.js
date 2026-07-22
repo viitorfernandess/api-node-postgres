@@ -28,13 +28,13 @@ class CustomersController {
 
         const newCustomer = await customersRepository.create(name, email)
 
-        return res.json(newCustomer)
+        return res.status(201).json(newCustomer)
     }
 
     async update(req, res) {
         const { id } = req.params
         const { name, email } = req.body
-        
+
         //Regra de negócio 
         const customer = await customersRepository.findById(id)
         if (!customer) {
