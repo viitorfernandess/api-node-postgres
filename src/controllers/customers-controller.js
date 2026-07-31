@@ -1,8 +1,10 @@
 import customersRepository from "../repositories/customers-repository.js"
 import ordersRepository from "../repositories/orders-repository.js"
+import AppError from "../errors/AppError.js"
 
 class CustomersController {
     async index(req, res) {
+        throw new AppError("Teste", 400)
         const customers = await customersRepository.findAll()
 
         return res.json(customers)
