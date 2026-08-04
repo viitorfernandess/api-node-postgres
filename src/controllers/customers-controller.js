@@ -15,7 +15,6 @@ class CustomersController {
             const { id } = req.params
 
             const customer = await customersRepository.findById(id)
-
             if (!customer) {
                 throw new AppError("Customer not found", 404)
             }
@@ -25,17 +24,19 @@ class CustomersController {
         }
     }
 
-    async create(req, res) {
-        const { name, email } = req.body
+    async create(req, res, next) {
+        try {
+            const { name, email } = req.body
 
-        const customer = await customersRepository.findByEmail(email)
-        if (customer) {
-            return res.status(409).json({ message: "Email already exists" })
+            const customer = await customersRepository.findByEmail(email)
+            if (customer) {
+                throw new AppError("Email already exists", 409)
+            }
+            const newCustomer = await customersRepository.create(name, email)
+            return res.status(201).json(newCustomer)
+        } catch (error) {
+            next(error)
         }
-
-        const newCustomer = await customersRepository.create(name, email)
-
-        return res.status(201).json(newCustomer)
     }
 
     async update(req, res) {
