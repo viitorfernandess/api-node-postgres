@@ -10,14 +10,19 @@ class CustomersController {
         return res.json(customers)
     }
 
-    async show(req, res) {
-        const { id } = req.params
-        // Regra de negócio
-        const customer = await customersRepository.findById(id)
-        if (!customer) {
-            return res.status(404).json({ message: "Customer not found" })
+    async show(req, res, next) {
+        try {
+            const { id } = req.params
+
+            const customer = await customersRepository.findById(id)
+
+            if (!customer) {
+                throw new AppError("Customer not found", 404)
+            }
+            return res.json(customer)
+        } catch (error) {
+            next(error)
         }
-        return res.json(customer)
     }
 
     async create(req, res) {
