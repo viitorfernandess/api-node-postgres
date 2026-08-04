@@ -39,23 +39,26 @@ class CustomersController {
         }
     }
 
-    async update(req, res) {
-        const { id } = req.params
-        const { name, email } = req.body
+    async update(req, res, next) {
+        try {
+            const { id } = req.params
+            const { name, email } = req.body
 
-        //Regra de negócio 
-        const customer = await customersRepository.findById(id)
-        if (!customer) {
-            return res.status(404).json({ message: "Customer not found" })
+            const customer = await customersRepository.findById(id)
+            if (!customer) {
+                throw new AppError("Customer not found", 404)
+            }
+
+            const customerByEmail = await customersRepository.findByEmail(email)
+            if (customerByEmail && customerByEmail.id !== Number(id)) {
+                throw new AppError("Email already exists", 409)
+            }
+
+            const updatedCustomer = await customersRepository.update(id, name, email)
+            return res.json(updatedCustomer)
+        } catch (error) {
+            next(error)
         }
-
-        const customerByEmail = await customersRepository.findByEmail(email)
-        if (customerByEmail && customerByEmail.id !== Number(id)) {
-            return res.status(409).json({ message: "Email already exists" })
-        }
-        const updatedCustomer = await customersRepository.update(id, name, email)
-
-        return res.json(updatedCustomer)
     }
 
     async delete(req, res) {
