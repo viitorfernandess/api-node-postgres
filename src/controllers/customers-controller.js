@@ -61,17 +61,19 @@ class CustomersController {
         }
     }
 
-    async delete(req, res) {
-        const { id } = req.params
-        // Regra de negócio
-        const customer = await customersRepository.findById(id)
-        if (!customer) {
-            return res.status(404).json({ message: "Customer not found" })
+    async delete(req, res, next) {
+        try {
+            const { id } = req.params
+
+            const customer = await customersRepository.findById(id)
+            if (!customer) {
+                throw new AppError("Customer not found", 404)
+            }
+            const deletedCustomer = await customersRepository.delete(id)
+            return res.json(deletedCustomer)
+        } catch (error) {
+            next(error)
         }
-
-        const deletedCustomer = await customersRepository.delete(id)
-
-        return res.json(deletedCustomer)
     }
 
     async orders(req, res) {
