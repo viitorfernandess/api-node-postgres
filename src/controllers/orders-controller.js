@@ -65,18 +65,20 @@ class OrdersController {
         }
     }
 
-    async delete(req, res) {
-        const { id } = req.params
+    async delete(req, res, next) {
+        try {
+            const { id } = req.params
 
-        // Regra de negócio
-        const order = await ordersRepository.findById(id)
-        if (!order) {
-            return res.status(404).json({ message: "Order not found" })
+            const order = await ordersRepository.findById(id)
+            if (!order) {
+                throw new AppError("Order not found", 404)
+            }
+
+            const deletedOrder = await ordersRepository.delete(id)
+            return res.json(deletedOrder)
+        } catch (error) {
+            next(error)
         }
-
-        const deletedOrder = await ordersRepository.delete(id)
-
-        return res.json(deletedOrder)
     }
 }
 
