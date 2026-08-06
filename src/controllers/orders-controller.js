@@ -47,20 +47,22 @@ class OrdersController {
         }
     }
 
-    async update(req, res) {
-        const { id } = req.params
-        const { description, amount } = req.body
+    async update(req, res, next) {
+        try {
+            const { id } = req.params
+            const { description, amount } = req.body
 
-        // Regra de negócio
-        const order = await ordersRepository.findById(id)
+            const order = await ordersRepository.findById(id)
+            if (!order) {
+                throw new AppError("Order not found", 404)
+            }
 
-        if (!order) {
-            return res.status(404).json({ message: "Order not found" })
+            const updatedOrder = await ordersRepository.update(id, description, amount)
+
+            return res.json(updatedOrder)
+        } catch (error) {
+            next(error)
         }
-
-        const updatedOrder = await ordersRepository.update(id, description, amount)
-
-        return res.json(updatedOrder)
     }
 
     async delete(req, res) {
