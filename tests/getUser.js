@@ -1,5 +1,5 @@
-function getUser() {
-    return {
+async function getUser() {
+    return  {
         name: "Vitor",
         age: 28
     }
