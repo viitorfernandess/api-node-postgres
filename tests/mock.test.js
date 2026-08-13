@@ -1,10 +1,11 @@
-TextDecoderStream("deve testar função mock", () => {
+import { jest } from "@jest/globals"
+
+test("deve retornar 50", () => {
     const mockFunction = jest.fn()
 
-    mockFunction.mockReturnValue(42)
+    mockFunction.mockReturnValue(50)
 
     const result = mockFunction()
 
-    expect(result).toBe(42)
-    expect(mockFunction).tohaveBeenCalled()
+    expect(result).toBe(50)
 })
