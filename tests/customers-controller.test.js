@@ -65,3 +65,57 @@ test("deve retornar erro quando o cliente não for encontrado", async () => {
 
     expect(error.message).toBe("Customer not found")
 })
+
+test("deve criar um cliente", async () => {
+
+    const spyFindByEmail = jest.spyOn(
+        customersRepository,
+        "findByEmail"
+    )
+
+    spyFindByEmail.mockResolvedValue(null)
+
+    const spyCreate = jest.spyOn(
+        customersRepository,
+        "create"
+    )
+
+    spyCreate.mockResolvedValue({
+        id: 10,
+        name: "Vitor",
+        email: "vitor@email.com"
+    })
+
+    const req = {
+        body: {
+            name: "Vitor",
+            email: "vitor@email.com"
+        }
+    }
+
+    const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await customersController.create(req, res, next)
+
+    expect(spyFindByEmail).toHaveBeenCalledWith("vitor@email.com")
+
+    expect(spyCreate).toHaveBeenCalledWith(
+        "Vitor",
+        "vitor@email.com"
+    )
+
+    expect(res.status).toHaveBeenCalledWith(201)
+
+    expect(res.json).toHaveBeenCalledWith({
+        id: 10,
+        name: "Vitor",
+        email: "vitor@email.com"
+    })
+
+    expect(spyCreate).toHaveBeenCalledTimes(1)
+})
