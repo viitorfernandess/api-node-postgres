@@ -2,6 +2,10 @@ import { jest } from "@jest/globals"
 import customersController from "../src/controllers/customers-controller"
 import customersRepository from "../src/repositories/customers-repository"
 
+afterEach(() => {
+    jest.clearAllMocks()
+})
+
 test("deve retornar o clinete pelo id", async () => {
     const spyFindById = jest.spyOn(
         customersRepository,
@@ -118,4 +122,50 @@ test("deve criar um cliente", async () => {
     })
 
     expect(spyCreate).toHaveBeenCalledTimes(1)
+})
+
+test("deve retornar erro quando o email ja existir", async () => {
+    const spyFindByEmail = jest.spyOn(
+        customersRepository,
+        "findByEmail"
+    )
+
+    const spyCreate = jest.spyOn(
+        customersRepository,
+        "create"
+    )
+
+    spyFindByEmail.mockResolvedValue({
+        id: 5,
+        name: "Outro cliente",
+        email: "vitor@email.com"
+    })
+
+    const next = jest.fn()
+
+    const req = {
+        body: {
+            name: "Vitor",
+            email: "vitor@email.com"
+        }
+    }
+
+    const res = {
+        status: jest.fn(),
+        json: jest.fn()
+    }
+
+    await customersController.create(req, res, next)
+
+    expect(next).toHaveBeenCalled()
+
+    expect(next).toHaveBeenCalledTimes(1)
+
+    const error = next.mock.calls[0][0]
+
+    expect(error.message).toBe("Email already exists")
+
+    expect(error.statusCode).toBe(409)
+
+    expect(spyCreate).not.toHaveBeenCalled()
 })
