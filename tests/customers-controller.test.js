@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals"
+import { expect, jest } from "@jest/globals"
 import customersController from "../src/controllers/customers-controller"
 import customersRepository from "../src/repositories/customers-repository"
 
@@ -168,4 +168,71 @@ test("deve retornar erro quando o email ja existir", async () => {
     expect(error.statusCode).toBe(409)
 
     expect(spyCreate).not.toHaveBeenCalled()
+})
+
+test("deve atualizar um cliente", async () => {
+    const spyFindById = jest.spyOn(
+        customersRepository,
+        "findById"
+    )
+
+    spyFindById.mockResolvedValue({
+        id: 10,
+        name: "Vitor",
+        email: "vitor@email.com"
+    })
+
+    const spyFindByEmail = jest.spyOn(
+        customersRepository,
+        "findByEmail"
+    )
+
+    spyFindByEmail.mockResolvedValue(null)
+
+    const spyUpdate = jest.spyOn(
+        customersRepository,
+        "update"
+    )
+
+    spyUpdate.mockResolvedValue({
+        id: 10,
+        name: "Vitor atualizado",
+        email: "email@novo.com"
+    })
+
+    const req = {
+        params: {
+            id: 10
+        },
+        body: {
+            name: "Vitor atualizado",
+            email: "email@novo.com"
+        }
+    }
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await customersController.update(req, res, next)
+
+    expect(spyFindById).toHaveBeenCalledWith(10)
+
+    expect(spyFindByEmail).toHaveBeenCalledWith("email@novo.com")
+
+    expect(spyUpdate).toHaveBeenCalledWith(
+        10,
+        "Vitor atualizado",
+        "email@novo.com"
+    )
+
+    expect(res.json).toHaveBeenCalledWith({
+        id: 10,
+        name: "Vitor atualizado",
+        email: "email@novo.com"
+    })
+
+    expect(spyUpdate).toHaveBeenCalledTimes(1)
 })
