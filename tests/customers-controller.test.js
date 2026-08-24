@@ -236,3 +236,45 @@ test("deve atualizar um cliente", async () => {
 
     expect(spyUpdate).toHaveBeenCalledTimes(1)
 })
+
+test("deve retornar erro quando o cliente não existir", async () => {
+    const spyFindById = jest.spyOn(
+        customersRepository,
+        "findById"
+    )
+
+    spyFindById.mockResolvedValue(null)
+
+    const req = {
+        params: {
+            id: 10
+        },
+        body: {
+            name: "Vitor atualizado",
+            email: "novo@email.com"
+        }
+    }
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await customersController.update(req, res, next)
+
+    expect(next).toHaveBeenCalled()
+
+    const error = next.mock.calls[0][0]
+
+    expect(error.message).toBe("Customer not found")
+
+    expect(error.statusCode).toBe(404)
+
+    const spyUpdate = jest.spyOn(
+        customersRepository,
+        "update"
+    )
+
+    expect(spyUpdate).not.toHaveBeenCalled()
+})
