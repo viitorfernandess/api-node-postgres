@@ -335,3 +335,55 @@ test("deve retornar erro quando o email já estiver em uso", async () => {
 
     expect(spyUpdate).not.toHaveBeenCalled()
 })
+
+test("deve deletar um cliente", async () => {
+    const spyFindById = jest.spyOn(
+        customersRepository,
+        "findById"
+    )
+
+    spyFindById.mockResolvedValue({
+        id: 10,
+        name: "Vitor",
+        email: "vitor@email.com"
+    })
+
+    const spyDelete = jest.spyOn(
+        customersRepository,
+        "delete"
+    )
+
+    spyDelete.mockResolvedValue({
+        id: 10,
+        name: "Vitor",
+        email: "vitor@email.com"
+    })
+
+    const req = {
+        params: {
+            id: 10
+        }
+    }
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await customersController.delete(req, res, next)
+
+    expect(spyFindById).toHaveBeenCalledWith(10)
+
+    expect(spyDelete).toHaveBeenCalledWith(10)
+
+    expect(spyDelete).toHaveBeenCalledTimes(1)
+
+    expect(res.json).toHaveBeenCalledWith({
+        id: 10,
+        name: "Vitor",
+        email: "vitor@email.com"
+    })
+
+    console.log(res.json.mock.calls)
+})
