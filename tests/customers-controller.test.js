@@ -278,3 +278,60 @@ test("deve retornar erro quando o cliente não existir", async () => {
 
     expect(spyUpdate).not.toHaveBeenCalled()
 })
+
+test("deve retornar erro quando o email já estiver em uso", async () => {
+    const spyFindById = jest.spyOn(
+        customersRepository,
+        "findById"
+    )
+
+    spyFindById.mockResolvedValue({
+        id: 10,
+        name: "Vitor",
+        email: "vitor@email.com"
+    })
+
+    const spyFindByEmail = jest.spyOn(
+        customersRepository,
+        "findByEmail"
+    )
+
+    spyFindByEmail.mockResolvedValue({
+        id: 20,
+        name: "outro cliente",
+        email: "novo@email.com"
+    })
+
+    const req = {
+        params: {
+            id: 10
+        },
+        body: {
+            name: "vitor atualizado",
+            email: "novo@eemail.com"
+        }
+    }
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await customersController.update(req, res, next)
+
+    expect(next).toHaveBeenCalled()
+
+    const error = next.mock.calls[0][0]
+
+    expect(error.message).toBe("Email already exists")
+
+    expect(error.statusCode).toBe(409)
+
+    const spyUpdate = jest.spyOn(
+        customersRepository,
+        "update"
+    )
+
+    expect(spyUpdate).not.toHaveBeenCalled()
+})
