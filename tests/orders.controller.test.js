@@ -1,4 +1,4 @@
-import { jest, test } from "@jest/globals"
+import { expect, jest, test } from "@jest/globals"
 
 import ordersRepository from "../src/repositories/orders-repository"
 import ordersController from "../src/controllers/orders-controller"
@@ -148,4 +148,36 @@ test("deve retornar um pedido pelo id", async () => {
     })
 
     expect(next).not.toHaveBeenCalled()
+})
+
+test("deve retornar erro quando o pedido não existir", async () => {
+    const spyFindById = jest.spyOn(
+        ordersRepository,
+        "findById"
+    )
+
+    spyFindById.mockResolvedValue(null)
+
+    const req = {
+        params: {
+            id: 1
+        }
+    }
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await ordersController.show(req, res, next)
+
+    expect(next).toHaveBeenCalled()
+
+    const error = next.mock.calls[0][0]
+
+    expect(error.message).toBe("Order not found")
+    expect(error.statusCode).toBe(404)
+
+    expect(res.json).not.toHaveBeenCalled()
 })
