@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals"
+import { jest, test } from "@jest/globals"
 
 import ordersRepository from "../src/repositories/orders-repository"
 import ordersController from "../src/controllers/orders-controller"
@@ -96,7 +96,7 @@ test("deve retornar erro quando o cliente não existir", async () => {
     const spyCreate = jest.spyOn(
         ordersRepository,
         "create"
-    ) 
+    )
 
     await ordersController.create(req, res, next)
 
@@ -109,4 +109,43 @@ test("deve retornar erro quando o cliente não existir", async () => {
     expect(error.statusCode).toBe(404)
 
     expect(spyCreate).not.toHaveBeenCalled()
+})
+
+test("deve retornar um pedido pelo id", async () => {
+    const spyFindById = jest.spyOn(
+        ordersRepository,
+        "findById"
+    )
+
+    spyFindById.mockResolvedValue({
+        id: 1,
+        customer_id: 10,
+        description: "pedido teste",
+        amount: 100
+    })
+
+    const req = {
+        params: {
+            id: 1
+        }
+    }
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await ordersController.show(req, res, next)
+
+    expect(spyFindById).toHaveBeenCalledWith(1)
+
+    expect(res.json).toHaveBeenCalledWith({
+        id: 1,
+        customer_id: 10,
+        description: "pedido teste",
+        amount: 100
+    })
+
+    expect(next).not.toHaveBeenCalled()
 })
