@@ -181,3 +181,64 @@ test("deve retornar erro quando o pedido não existir", async () => {
 
     expect(res.json).not.toHaveBeenCalled()
 })
+
+test("deve atualizar um pedido", async () => {
+    const spyFindById = jest.spyOn(
+        ordersRepository,
+        "findById"
+    )
+
+    spyFindById.mockResolvedValue({
+        id: 1,
+        custoemr_id: 10,
+        description: "pedido antigo",
+        amount: 100
+    })
+
+    const spyUpdate = jest.spyOn(
+        ordersRepository,
+        "update"
+    )
+
+    spyUpdate.mockResolvedValue({
+        id: 1,
+        customer_id: 10,
+        description: "pedido atualizado",
+        amount: 150
+    })
+
+    const req = {
+        params: {
+            id: 1
+        },
+        body: {
+            description: "pedido atualizado",
+            amount: 150
+        }
+    }
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await ordersController.update(req, res, next)
+
+    expect(spyFindById).toHaveBeenCalledWith(1)
+
+    expect(spyUpdate).toHaveBeenCalledWith(
+        1,
+        "pedido atualizado",
+        150
+    )
+
+    expect(res.json).toHaveBeenCalledWith({
+        id: 1,
+        customer_id: 10,
+        description: "pedido atualizado",
+        amount: 150
+    })
+
+    expect(next).not.toHaveBeenCalled()
+})
