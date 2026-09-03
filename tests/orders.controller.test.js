@@ -358,7 +358,7 @@ test("deve retornar erro quando o pedido não existir", async () => {
     const res = {
         json: jest.fn()
     }
-    
+
     const next = jest.fn()
 
     await ordersController.delete(req, res, next)
@@ -373,4 +373,49 @@ test("deve retornar erro quando o pedido não existir", async () => {
     expect(spyDelete).not.toHaveBeenCalled()
 
     expect(res.json).not.toHaveBeenCalled()
+})
+
+test("deve retornar todos os pedidos", async () => {
+    const spyFindAll = jest.spyOn(
+        ordersRepository,
+        "findAll"
+    )
+
+    spyFindAll.mockResolvedValue([{
+        id: 1,
+        customer_id: 10,
+        description: "pedido teste",
+        amount: 100
+    },
+    {
+        id: 2,
+        customer_id: 10,
+        description: "pedido teste 2",
+        amount: 120
+    }])
+
+    const req = {}
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+    await ordersController.index(req, res, next)
+
+    expect(spyFindAll).toHaveBeenCalled()
+
+    expect(res.json).toHaveBeenCalledWith([{
+        id: 1,
+        customer_id: 10,
+        description: "pedido teste",
+        amount: 100
+    },
+    {
+        id: 2,
+        customer_id: 10,
+        description: "pedido teste 2",
+        amount: 120
+    }])
 })
