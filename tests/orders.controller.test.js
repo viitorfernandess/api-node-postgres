@@ -283,3 +283,55 @@ test("deve retornar erro quando o pedido não existir", async () => {
 
     expect(spyUpdate).not.toHaveBeenCalled()
 })
+
+test("deve deletar um pedido", async () => {
+    const spyFindById = jest.spyOn(
+        ordersRepository,
+        "findById"
+    )
+
+    spyFindById.mockResolvedValue({
+        id: 1,
+        customer_id: 10,
+        description: "pedido teste",
+        amount: 100
+    })
+
+    const spyDelete = jest.spyOn(
+        ordersRepository,
+        "delete"
+    )
+
+    spyDelete.mockResolvedValue({
+        id: 1,
+        customer_id: 10,
+        description: "pedido teste",
+        amount: 100
+    })
+
+    const req = {
+        params: {
+            id: 1
+        }
+    }
+
+    const res = {
+        json: jest.fn()
+    }
+
+    const next = jest.fn()
+
+
+    await ordersController.delete(req, res, next)
+
+    expect(spyFindById).toHaveBeenCalledWith(1)
+
+    expect(res.json).toHaveBeenCalledWith({
+        id: 1,
+        customer_id: 10,
+        description: "pedido teste",
+        amount: 100
+    })
+
+    expect(next).not.toHaveBeenCalled()
+})
