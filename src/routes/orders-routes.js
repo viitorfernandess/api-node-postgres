@@ -5,11 +5,11 @@ import ensureAuth from '../middleware/ensure-auth.js'
 
 const router = express.Router()
 
-router.use(ensureAuth)
+router.use('/orders', ensureAuth)
 
 router.get('/orders', ordersController.index)
 router.get('/orders/:id', ordersController.show)
-router.put('/customers/:customerId/orders', validateOrder, ordersController.create)
+router.put('/customers/:customerId/orders', ensureAuth, validateOrder, ordersController.create)
 router.put('/orders/:id', validateOrder, ordersController.update)
 router.delete('/orders/:id', ordersController.delete)
 

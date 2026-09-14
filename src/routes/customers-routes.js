@@ -5,7 +5,7 @@ import ensureAuth from '../middleware/ensure-auth.js'
 
 const router = express.Router()
 
-router.use(ensureAuth)
+router.use('/customers', ensureAuth)
 
 
 router.get('/customers', customersController.index)

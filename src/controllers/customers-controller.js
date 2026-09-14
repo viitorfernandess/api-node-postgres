@@ -4,6 +4,7 @@ import AppError from "../errors/AppError.js"
 
 class CustomersController {
     async index(req, res) {
+        console.log(req.userId)
         const customers = await customersRepository.findAll()
 
         return res.json(customers)
