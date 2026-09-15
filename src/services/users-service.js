@@ -4,7 +4,7 @@ import AppError from "../errors/AppError.js"
 import jwt from "jsonwebtoken"
 
 class UsersService {
-    async create(name, email, password) {
+    async create(name, email, password, role) {
 
         const user = await usersRepository.findByEmail(email)
 
@@ -16,7 +16,8 @@ class UsersService {
         return usersRepository.create(
             name,
             email,
-            hashedPassword
+            hashedPassword,
+            role
         )
     }
 

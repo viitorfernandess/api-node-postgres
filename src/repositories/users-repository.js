@@ -10,17 +10,18 @@ class UsersRepository {
         return result.rows[0]
     }
 
-    async create(name, email, password) {
+    async create(name, email, password, role) {
         const result = await pool.query(
             `INSERT INTO users (
         name,
         email,
-        password
+        password,
+        role
         )
         
-        VALUES ($1, $2, $3)
+        VALUES ($1, $2, $3, $4)
         RETURNING * `,
-            [name, email, password]
+            [name, email, password, role]
         )
         return result.rows[0]
     }
