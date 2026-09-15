@@ -21,6 +21,7 @@ function ensureAuth(req, res, next) {
             process.env.JWT_SECRET
         )
         req.userId = decoded.id
+        req.userRole = decoded.role
 
         next()
     } catch (error) {
