@@ -21,4 +21,20 @@ describe("ensureAuth", () => {
             expect(error.statusCode).toBe(401)
         }
     })
+
+    it("deve retornar erro qunado o formato do token for inválido", () => {
+        const req = {
+            headers: {
+                authorization: "Token abc123"
+            }
+        }
+
+        try {
+            ensureAuth(req)
+        } catch (error) {
+            expect(error).toBeInstanceOf(AppError)
+            expect(error.statusCode).toBe(401)
+            expect(error.message).toBe("Invalid authorization format")
+        }
+    })
 })
