@@ -2,6 +2,7 @@ import { describe, it, expect, jest, afterEach } from "@jest/globals"
 
 import ensureAuth from "../src/middleware/ensure-auth.js"
 import AppError from "../src/errors/AppError.js"
+import jwt from "jsonwebtoken"
 
 afterEach(() => {
     jest.clearAllMocks()
@@ -54,5 +55,28 @@ describe("ensureAuth", () => {
         expect(error).toBeInstanceOf(AppError)
         expect(error.statusCode).toBe(401)
         expect(error.message).toBe("Token inválido ou expirado")
+    })
+
+    it("deve permitir acesso com token válido", () => {
+        const req = {
+            headers: {
+                authorization: "Bearer token-falso"
+            }
+        }
+
+        const next = jest.fn()
+
+        const spyVerify = jest.spyOn(jwt, "verify")
+
+        spyVerify.mockReturnValue({
+            id: 3,
+            role: "manager"
+        })
+
+        ensureAuth(req, null, next)
+
+        expect(req.userId).toBe(3)
+        expect(req.userRole).toBe("manager")
+        expect(next).toHaveBeenCalled()
     })
 })
