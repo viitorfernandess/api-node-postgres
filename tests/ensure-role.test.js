@@ -37,4 +37,25 @@ describe("ensureRole", () => {
 
         expect(next).toHaveBeenCalled()
     })
+
+    it("deve retornar erro ao tentar acessar com a role de seller", () => {
+
+        const req = {
+            userRole: "seller"
+        }
+
+        const next = jest.fn()
+
+        const middleware = ensureRole("admin", "manager")
+
+        try {
+            middleware(req, null, next)
+        } catch (error) {
+            expect(error).toBeInstanceOf(AppError)
+            expect(error.statusCode).toBe(403)
+            expect(error.message).toBe("Access denied")
+        }
+
+        expect(next).not.toHaveBeenCalled()
+    })
 })
