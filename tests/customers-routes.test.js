@@ -37,6 +37,26 @@ describe("GET /customers", () => {
 
         expect(response.statusCode).toBe(401)
     })
+
+    it("deve criar um ucstomer com dados válidos", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "manager"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+            .post("/customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Integracao",
+                email: "teste-integracao@email.com"
+            })
+
+        expect(response.statusCode).toBe(201)
+    })
 })
 
 afterAll(async () => {
