@@ -29,6 +29,14 @@ describe("GET /customers", () => {
 
         expect(response.statusCode).toBe(200)
     })
+
+    it("deve retornar 401 com token inválido", async () => {
+        const response = await request(app)
+            .get("/customers")
+            .set("Authorization", "Bearer token-falso")
+
+        expect(response.statusCode).toBe(401)
+    })
 })
 
 afterAll(async () => {
