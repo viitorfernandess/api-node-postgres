@@ -1,9 +1,22 @@
 import request from "supertest"
-import { describe, it, expect, afterAll } from "@jest/globals"
+import { describe, it, expect, afterAll, afterEach } from "@jest/globals"
 import jwt from "jsonwebtoken"
 import pool from "../database.js"
 
 import app from "../app.js"
+
+let customerId
+
+afterEach(async () => {
+    if (customerId) {
+        await pool.query(
+            "DELETE FROM customers WHERE id = $1",
+            [customerId]
+        )
+
+        customerId = null
+    }
+})
 
 describe("GET /customers", () => {
 
@@ -52,8 +65,10 @@ describe("GET /customers", () => {
             .set("Authorization", `Bearer ${token}`)
             .send({
                 name: "Integracao",
-                email: "teste-integracao@email.com"
+                email: "teste-integracao-04@email.com"
             })
+
+        customerId = response.body.id
 
         expect(response.statusCode).toBe(201)
     })
