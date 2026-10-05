@@ -103,6 +103,25 @@ describe("GET /customers", () => {
         expect(responseDuplicate.statusCode).toBe(409)
         expect(responseDuplicate.body.message).toBe("Email already exists")
     })
+
+    it("deve retornar 400 quando dos dados forem inválidos", async () => {
+        const token = jwt.sign({
+            id: 1,
+            role: "manager"
+        },
+            process.env.JWT_SECRET)
+
+        const response = await request(app)
+            .post("/customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "",
+                email: "email-invalido"
+            })
+
+        expect(response.statusCode).toBe(400)
+        expect(response.body.message).toBe("Name cannot be empty")
+    })
 })
 
 afterAll(async () => {
