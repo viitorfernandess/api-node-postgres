@@ -51,7 +51,7 @@ describe("GET /customers", () => {
         expect(response.statusCode).toBe(401)
     })
 
-    it("deve criar um ucstomer com dados válidos", async () => {
+    it("deve criar um customer com dados válidos", async () => {
         const token = jwt.sign(
             {
                 id: 1,
@@ -71,6 +71,37 @@ describe("GET /customers", () => {
         customerId = response.body.id
 
         expect(response.statusCode).toBe(201)
+    })
+
+    it("deve retornar 409 quando o email já existir", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "manager"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+            .post("/ customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Cliente teste",
+                email: "email-duplicado@email.com"
+            })
+
+        customerId = response.body.id
+
+        const responseDuplicate = await request(app)
+            .post("/customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Outro cliente",
+                email: "email-duplicado@email.com"
+            })
+
+        expect(responseDuplicate.statusCode).toBe(409)
+        expect(responseDuplicate.body.message).toBe("Email already exists")
     })
 })
 
