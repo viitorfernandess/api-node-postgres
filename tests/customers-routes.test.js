@@ -122,6 +122,38 @@ describe("GET /customers", () => {
         expect(response.statusCode).toBe(400)
         expect(response.body.message).toBe("Name cannot be empty")
     })
+
+    it("deve atualizar um customer com dados válidos", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "manager"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+        .post("/customers")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            name: "Cliente para atualizar",
+            email: "cliente-atualizar@email.com"
+        })
+
+        customerId = response.body.id
+
+        const updateResponse = await request(app)
+        .put( `/customers/${customerId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+            name: "Cliente atualizado",
+            email: "cliente-atualizado@email.com"
+        })
+
+        expect(updateResponse.statusCode).toBe(200)
+        expect(updateResponse.body.name).toBe("Cliente atualizado")
+        expect(updateResponse.body.email).toBe("cliente-atualizado@email.com")
+    })
 })
 
 afterAll(async () => {
