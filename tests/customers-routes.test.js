@@ -133,26 +133,56 @@ describe("GET /customers", () => {
         )
 
         const response = await request(app)
-        .post("/customers")
-        .set("Authorization", `Bearer ${token}`)
-        .send({
-            name: "Cliente para atualizar",
-            email: "cliente-atualizar@email.com"
-        })
+            .post("/customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Cliente para atualizar",
+                email: "cliente-atualizar@email.com"
+            })
 
         customerId = response.body.id
 
         const updateResponse = await request(app)
-        .put( `/customers/${customerId}`)
-        .set("Authorization", `Bearer ${token}`)
-        .send({
-            name: "Cliente atualizado",
-            email: "cliente-atualizado@email.com"
-        })
+            .put(`/customers/${customerId}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Cliente atualizado",
+                email: "cliente-atualizado@email.com"
+            })
 
         expect(updateResponse.statusCode).toBe(200)
         expect(updateResponse.body.name).toBe("Cliente atualizado")
         expect(updateResponse.body.email).toBe("cliente-atualizado@email.com")
+    })
+
+    test("deve retornar 403 quando seller tentar atualizar um customer", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "seller"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+            .post("/customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Cliente para teste de permissao",
+                email: "cliente-permissao@email.com"
+            })
+
+        customerId = response.body.id
+
+        const updateResponse = await request(app)
+            .put(`/customers/${customerId}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Cliente atualizado",
+                email: "cliente-atualizado@email.com"
+            })
+
+        expect(updateResponse.statusCode).toBe(403)
     })
 })
 
