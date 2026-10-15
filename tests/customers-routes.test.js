@@ -1,5 +1,5 @@
 import request from "supertest"
-import { describe, it, expect, afterAll, afterEach } from "@jest/globals"
+import { describe, it, expect, afterAll, afterEach, test } from "@jest/globals"
 import jwt from "jsonwebtoken"
 import pool from "../database.js"
 
@@ -209,6 +209,32 @@ describe("GET /customers", () => {
             .set("Authorization", `Bearer ${token}`)
 
         expect(deleteResponse.statusCode).toBe(403)
+    })
+
+    test("deve excluir um customer quando admin fizer a requisicao", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "admin"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+            .post('/customers')
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "cliente novo",
+                email: "cliente-novo@email.com"
+            })
+
+        customerId = response.body.id
+
+        const deleteResponse = await request(app)
+            .delete(`/customers/${customerId}`)
+            .set("Authorization", `Bearer ${token}`)
+
+            expect(deleteResponse.statusCode).toBe(200)
     })
 })
 
