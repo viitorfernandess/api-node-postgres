@@ -184,6 +184,32 @@ describe("GET /customers", () => {
 
         expect(updateResponse.statusCode).toBe(403)
     })
+
+    test("deve retornar 403 quando seller tentar excluir um customer", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "seller"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+            .post("/customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Cliente novo",
+                email: "cliente-novo@email.com"
+            })
+
+        customerId = response.body.id
+
+        const deleteResponse = await request(app)
+            .delete(`/customers/${customerId}`)
+            .set("Authorization", `Bearer ${token}`)
+
+        expect(deleteResponse.statusCode).toBe(403)
+    })
 })
 
 afterAll(async () => {
