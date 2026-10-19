@@ -262,6 +262,35 @@ describe("GET /customers", () => {
 
         expect(responseDelete.statusCode).toBe(403)
     })
+
+    test("deve retornar o customer pelo id", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "admin"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+            .post("/customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Cliente novo",
+                email: "cliente-novo@email.com"
+            })
+
+        customerId = response.body.id
+
+        const responseCustomers = await request(app)
+            .get(`/customers/${customerId}`)
+            .set("Authorization", `Bearer ${token}`)
+
+
+        expect(responseCustomers.body.name).toBe("Cliente novo")
+        expect(responseCustomers.body.email).toBe("cliente-novo@email.com")
+        expect(responseCustomers.statusCode).toBe(200)
+    })
 })
 
 afterAll(async () => {
