@@ -234,7 +234,33 @@ describe("GET /customers", () => {
             .delete(`/customers/${customerId}`)
             .set("Authorization", `Bearer ${token}`)
 
-            expect(deleteResponse.statusCode).toBe(200)
+        expect(deleteResponse.statusCode).toBe(200)
+    })
+
+    test("deve retornar 403 quando manager tentar excluir um customer", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "manager"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+            .post("/customers")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "cliente novo",
+                email: "cliente-novo@email.com"
+            })
+
+        customerId = response.body.id
+
+        const responseDelete = await request(app)
+            .delete(`/customers/${customerId}`)
+            .set("Authorization", `Bearer ${token}`)
+
+        expect(responseDelete.statusCode).toBe(403)
     })
 })
 
