@@ -291,6 +291,40 @@ describe("GET /customers", () => {
         expect(responseCustomers.body.email).toBe("cliente-novo@email.com")
         expect(responseCustomers.statusCode).toBe(200)
     })
+
+    test("deve retornar 404 quando o customer nao existir", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "admin"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const responseCustomers = await request(app)
+            .get("/customers/123")
+            .set("Authorization", `Bearer ${token}`)
+
+        expect(responseCustomers.statusCode).toBe(404)
+    })
+
+    test("deve retornar customer da rota get", async () => {
+        const token = jwt.sign(
+            {
+                id: 1,
+                role: "admin"
+            },
+            process.env.JWT_SECRET
+        )
+
+        const response = await request(app)
+            .get("/customers")
+            .set("Authorization", `Bearer ${token}`)
+
+        expect(response.statusCode).toBe(200)
+        expect(Array.isArray(response.body)).toBe(true)
+
+    })
 })
 
 afterAll(async () => {
