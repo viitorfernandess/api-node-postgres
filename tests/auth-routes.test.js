@@ -79,3 +79,18 @@ test("deve retornar erro ao tentar fazer login com email inexistente", async () 
 
     expect(response.statusCode).toBe(401)
 })
+
+test("deve bloquear login após exceder o limite", async () => {
+    let response
+
+    for (let i = 0; i < 6; i++) {
+        response = await request(app)
+            .post("/login")
+            .send({
+                email: "usuario-teste@email.com",
+                password: "123456"
+            })
+    }
+
+    expect(response.statusCode).toBe(429)
+})
