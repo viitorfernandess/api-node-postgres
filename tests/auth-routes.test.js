@@ -40,9 +40,31 @@ test("deve fazer login com credenciais válidas", async () => {
             password: "senhateste123"
         })
 
-        console.log(loginResponse.body)
-
     expect(loginResponse.statusCode).toBe(200)
     expect(typeof loginResponse.body).toBe("string")
     expect(loginResponse.body.length).toBeGreaterThan(0)
+})
+
+test("deve retornar senha incorreta ao usuário fazer login", async () => {
+    const userResponse = await request(app)
+        .post("/users")
+        .send({
+            name: "Usuário teste",
+            email: "teste-login3@email.com",
+            password: "senhateste123",
+            role: "admin"
+        })
+
+    expect(userResponse.statusCode).toBe(201)
+
+    userId = userResponse.body.id
+
+    const loginResponse = await request(app)
+        .post("/login")
+        .send({
+            email: "teste-login3@email.com",
+            password: "senhateste12"
+        })
+
+    expect(loginResponse.statusCode).toBe(401)
 })
