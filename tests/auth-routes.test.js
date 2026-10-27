@@ -68,3 +68,14 @@ test("deve retornar senha incorreta ao usuário fazer login", async () => {
 
     expect(loginResponse.statusCode).toBe(401)
 })
+
+test("deve retornar erro ao tentar fazer login com email inexistente", async () => {
+    const response = await request(app)
+        .post("/login")
+        .send({
+            email: "emailemail@email.com",
+            password: "123456"
+        })
+
+    expect(response.statusCode).toBe(401)
+})
