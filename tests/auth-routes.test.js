@@ -94,3 +94,10 @@ test("deve bloquear login após exceder o limite", async () => {
 
     expect(response.statusCode).toBe(429)
 })
+
+test("deve retornar erro ao tentar acessar rota protegida sem token", async () => {
+    const response = await request(app)
+    .get("/customers")
+
+    expect(response.statusCode).toBe(401)
+})
