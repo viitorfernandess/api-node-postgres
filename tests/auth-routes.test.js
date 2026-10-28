@@ -97,7 +97,15 @@ test("deve bloquear login após exceder o limite", async () => {
 
 test("deve retornar erro ao tentar acessar rota protegida sem token", async () => {
     const response = await request(app)
-    .get("/customers")
+        .get("/customers")
+
+    expect(response.statusCode).toBe(401)
+})
+
+test("deve retornar erro ao acessar rota protegida com token inválido", async () => {
+    const response = await request(app)
+        .get("/customers")
+        .set("Authorization", "Bearer token-invalido")
 
     expect(response.statusCode).toBe(401)
 })
