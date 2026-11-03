@@ -1,32 +1,42 @@
 import jwt from "jsonwebtoken"
 import AppError from "../errors/AppError.js"
+import usersRepository from "../repositories/users-repository.js"
 
 
-function ensureAuth(req, res, next) {
+async function ensureAuth(req, res, next) {
     const authHeader = req.headers.authorization
 
     if (!authHeader) {
-        throw new AppError("Token not provided", 401)
+        return next(new AppError("Token not provided", 401))
     }
 
     const [prefix, token] = authHeader.split(" ")
 
     if (prefix !== "Bearer" || !token) {
-        throw new AppError("Invalid authorization format", 401)
+        return next(new AppError("Invalid authorization format", 401))
     }
 
+    let decoded
+
     try {
-        const decoded = jwt.verify(
+        decoded = jwt.verify(
             token,
             process.env.JWT_SECRET
         )
-        req.userId = decoded.id
-        req.userRole = decoded.role
-
-        next()
     } catch (error) {
-        next(new AppError("Token inválido ou expirado", 401))
+        return next(new AppError("Invalid or expired token", 401))
     }
+
+    const user = await usersRepository.findById(decoded.id)
+    if (!user) {
+        throw new AppError("User not found", 401)
+
+    }
+
+    req.userId = user.id
+    req.userRole = user.role
+
+    next()
 }
 
 export default ensureAuth

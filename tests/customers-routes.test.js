@@ -126,7 +126,7 @@ describe("GET /customers", () => {
     it("deve atualizar um customer com dados válidos", async () => {
         const token = jwt.sign(
             {
-                id: 1,
+                id: 3,
                 role: "manager"
             },
             process.env.JWT_SECRET
@@ -214,7 +214,7 @@ describe("GET /customers", () => {
     test("deve excluir um customer quando admin fizer a requisicao", async () => {
         const token = jwt.sign(
             {
-                id: 1,
+                id: 4,
                 role: "admin"
             },
             process.env.JWT_SECRET
@@ -240,7 +240,7 @@ describe("GET /customers", () => {
     test("deve retornar 403 quando manager tentar excluir um customer", async () => {
         const token = jwt.sign(
             {
-                id: 1,
+                id: 3,
                 role: "manager"
             },
             process.env.JWT_SECRET

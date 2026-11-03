@@ -3,6 +3,7 @@ import { describe, it, expect, jest, afterEach } from "@jest/globals"
 import ensureAuth from "../src/middleware/ensure-auth.js"
 import AppError from "../src/errors/AppError.js"
 import jwt from "jsonwebtoken"
+import usersRepository from "../src/repositories/users-repository.js"
 
 afterEach(() => {
     jest.clearAllMocks()
@@ -15,12 +16,15 @@ describe("ensureAuth", () => {
             headers: {}
         }
 
-        try {
-            ensureAuth(req)
-        } catch (error) {
-            expect(error).toBeInstanceOf(AppError)
-            expect(error.statusCode).toBe(401)
-        }
+        const next = jest.fn()
+
+        ensureAuth(req, null, next)
+
+        const error = next.mock.calls[0][0]
+
+        expect(error).toBeInstanceOf(AppError)
+        expect(error.statusCode).toBe(401)
+        expect(error.message).toBe("Token not provided")
     })
 
     it("deve retornar erro quando o formato do token for inválido", () => {
@@ -30,13 +34,15 @@ describe("ensureAuth", () => {
             }
         }
 
-        try {
-            ensureAuth(req)
-        } catch (error) {
-            expect(error).toBeInstanceOf(AppError)
-            expect(error.statusCode).toBe(401)
-            expect(error.message).toBe("Invalid authorization format")
-        }
+        const next = jest.fn()
+
+        ensureAuth(req, null, next)
+
+        const error = next.mock.calls[0][0]
+
+        expect(error).toBeInstanceOf(AppError)
+        expect(error.statusCode).toBe(401)
+        expect(error.message).toBe("Invalid authorization format")
     })
 
     it("deve retornar erro quando o token for inválido ou expirar", () => {
@@ -54,29 +60,34 @@ describe("ensureAuth", () => {
 
         expect(error).toBeInstanceOf(AppError)
         expect(error.statusCode).toBe(401)
-        expect(error.message).toBe("Token inválido ou expirado")
+        expect(error.message).toBe("Invalid or expired token")
     })
 
-    it("deve permitir acesso com token válido", () => {
-        const req = {
-            headers: {
-                authorization: "Bearer token-falso"
-            }
+    it("deve permitir acesso com token válido", async () => {
+    const req = {
+        headers: {
+            authorization: "Bearer token-falso"
         }
+    }
 
-        const next = jest.fn()
+    const next = jest.fn()
 
-        const spyVerify = jest.spyOn(jwt, "verify")
+    const spyVerify = jest.spyOn(jwt, "verify")
 
-        spyVerify.mockReturnValue({
-            id: 3,
-            role: "manager"
-        })
-
-        ensureAuth(req, null, next)
-
-        expect(req.userId).toBe(3)
-        expect(req.userRole).toBe("manager")
-        expect(next).toHaveBeenCalled()
+    spyVerify.mockReturnValue({
+        id: 3,
+        role: "manager"
     })
+
+    jest.spyOn(usersRepository, "findById").mockResolvedValue({
+        id: 3,
+        role: "manager"
+    })
+
+    await ensureAuth(req, null, next)
+
+    expect(req.userId).toBe(3)
+    expect(req.userRole).toBe("manager")
+    expect(next).toHaveBeenCalled()
+})
 })
