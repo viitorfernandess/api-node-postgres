@@ -2,6 +2,7 @@ import request from "supertest"
 import { test, expect, afterEach, afterAll } from "@jest/globals"
 import pool from "../database.js"
 import app from "../app.js"
+import jwt from "jsonwebtoken"
 
 let userId
 
@@ -106,6 +107,23 @@ test("deve retornar erro ao acessar rota protegida com token inválido", async (
     const response = await request(app)
         .get("/customers")
         .set("Authorization", "Bearer token-invalido")
+
+    expect(response.statusCode).toBe(401)
+})
+
+test("deve retornar erro ao acessar rota com token expirado", async () => {
+    const token = jwt.sign({
+        id: 1,
+        role: "admin"
+    },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "-1h"
+        })
+
+    const response = await request(app)
+        .get("/customers")
+        .set("Authorization", `Bearer ${token}`)
 
     expect(response.statusCode).toBe(401)
 })
