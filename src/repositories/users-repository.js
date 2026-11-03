@@ -25,6 +25,15 @@ class UsersRepository {
         )
         return result.rows[0]
     }
+
+    async findById(id) {
+        const result = await pool.query(
+            `SELECT * FROM users
+            WHERE id = $1`,
+            [id]
+        )
+        return result.rows[0]
+    }
 }
 
 export default new UsersRepository()
