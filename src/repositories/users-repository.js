@@ -28,7 +28,7 @@ class UsersRepository {
 
     async findById(id) {
         const result = await pool.query(
-            `SELECT * FROM users
+            `SELECT id, role, token_version FROM users
             WHERE id = $1`,
             [id]
         )
