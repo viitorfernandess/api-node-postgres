@@ -31,12 +31,13 @@ class UsersService {
         const senhaValida = await bcrypt.compare(password, user.password)
         if (!senhaValida) {
             throw new AppError("Invalid email or password", 401)
-        }
+        } 
 
         const token = jwt.sign(
             {
                 id: user.id,
-                role: user.role
+                role: user.role,
+                tokenVersion: user.token_version
             },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
