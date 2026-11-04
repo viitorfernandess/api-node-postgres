@@ -30,7 +30,10 @@ async function ensureAuth(req, res, next) {
     const user = await usersRepository.findById(decoded.id)
     if (!user) {
         throw new AppError("User not found", 401)
+    }
 
+    if (decoded.tokenVersion !== user.token_version) {
+        throw new AppError("Invalid token", 401)
     }
 
     req.userId = user.id
