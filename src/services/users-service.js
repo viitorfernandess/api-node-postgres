@@ -31,7 +31,7 @@ class UsersService {
         const senhaValida = await bcrypt.compare(password, user.password)
         if (!senhaValida) {
             throw new AppError("Invalid email or password", 401)
-        } 
+        }
 
         const token = jwt.sign(
             {
@@ -47,13 +47,28 @@ class UsersService {
     }
 
     async changePassword(id, currentPassword, newPassword) {
-        const user = await usersRepository.findById(id)
+        const user = await usersRepository.findPasswordById(id)
 
-        if(!user) {
+        if (!user) {
             throw new AppError("User not found", 404)
         }
 
-        const senhaValida = await bcrypt.compare(newPassword, user.currentPassword)
+        const senhaValida = await bcrypt.compare(
+            currentPassword,
+            user.password
+        )
+
+        if (!senhaValida) {
+            throw new AppError("Invalid password", 401)
+        }
+
+        if (newPassword.length < 8) {
+            throw new AppError("Password must contain at least 8 characters", 400)
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+        await usersRepository.updatePassword(id, hashedPassword)
     }
 }
 
