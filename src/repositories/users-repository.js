@@ -49,6 +49,15 @@ class UsersRepository {
         )
         return result.rows[0]
     }
+
+    async findPasswordById(id) {
+        const result = await pool.query(
+            `SELECT id, password FROM users
+            WHERE id = $1`,
+            [id]
+        )
+        return result.rows[0]
+    }
 }
 
 export default new UsersRepository()

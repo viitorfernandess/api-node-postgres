@@ -45,6 +45,16 @@ class UsersService {
 
         return token
     }
+
+    async changePassword(id, currentPassword, newPassword) {
+        const user = await usersRepository.findById(id)
+
+        if(!user) {
+            throw new AppError("User not found", 404)
+        }
+
+        const senhaValida = await bcrypt.compare(newPassword, user.currentPassword)
+    }
 }
 
 export default new UsersService()
