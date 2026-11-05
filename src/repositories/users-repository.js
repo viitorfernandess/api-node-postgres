@@ -34,6 +34,21 @@ class UsersRepository {
         )
         return result.rows[0]
     }
+
+    async updatePassword(id, password) {
+        const result = await pool.query(
+            `
+            UPDATE users
+            SET
+            password = $1,
+            token_version = token_version + 1
+            WHERE id = $2
+            RETURNING id, token_version
+            `,
+            [password, id]
+        )
+        return result.rows[0]
+    }
 }
 
 export default new UsersRepository()
