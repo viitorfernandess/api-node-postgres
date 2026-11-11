@@ -29,6 +29,21 @@ class UsersController {
             next(error)
         }
     }
+
+    async changePassword(req, res, next) {
+        try {
+            const id = req.userId
+            const { currentPassword, newPassword } = req.body
+
+            await usersService.changePassword(id, currentPassword, newPassword)
+
+            return res.status(200).json({
+                message: "Password updated successfully"
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 export default new UsersController()
