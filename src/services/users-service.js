@@ -59,7 +59,7 @@ class UsersService {
         )
 
         if (!senhaValida) {
-            throw new AppError("Invalid password", 401)
+            throw new AppError("Invalid password", 401) 
         }
 
         if (newPassword.length < 8) {
