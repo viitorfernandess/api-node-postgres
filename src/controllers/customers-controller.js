@@ -1,11 +1,21 @@
 import customersRepository from "../repositories/customers-repository.js"
 import ordersRepository from "../repositories/orders-repository.js"
 import AppError from "../errors/AppError.js"
+import redisClient from "../config/redis.js"
 
 class CustomersController {
     async index(req, res) {
-        console.log(req.userId)
+        const cachedCustomers = await redisClient.get("customers")
+
+        if (cachedCustomers) {
+            return res.json(JSON.parse(cachedCustomers))
+        }
+
         const customers = await customersRepository.findAll()
+
+        await redisClient.set("customers", JSON.stringify(customers), {
+            EX: 60
+        })
 
         return res.json(customers)
     }
